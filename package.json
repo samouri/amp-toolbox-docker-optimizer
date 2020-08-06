@@ -1,0 +1,26 @@
+{
+  "name": "amp-optimizer-docker",
+  "version": "0.0.1",
+  "description": "Thin wrapper around the amp-optimizer",
+  "main": "index.js",
+  "scripts": {
+    "build-docker": "docker build . -t 'amp-toolbox-docker-optimizer'",
+    "run-docker": "docker run -p 3000:3000 -it amp-toolbox-docker-optimizer",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samouri/amp-optimizer-docker.git"
+  },
+  "keywords": ["amp", "optimizer", "docker"],
+  "author": "samouri",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/samouri/amp-optimizer-docker/issues"
+  },
+  "homepage": "https://github.com/samouri/amp-optimizer-docker#readme",
+  "dependencies": {
+    "@ampproject/toolbox-optimizer": "^2.5.14",
+    "express": "^4.17.1"
+  }
+}
