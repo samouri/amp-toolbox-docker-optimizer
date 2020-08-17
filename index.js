@@ -1,7 +1,3 @@
-/**
- *
- */
-
 const AmpOptimizer = require("@ampproject/toolbox-optimizer");
 const ampOptimizer = AmpOptimizer.create(getOptions());
 
@@ -14,6 +10,9 @@ app.use(express.text());
 app.use(express.json());
 
 const opts = {};
+
+// TODO: this needs to be set per request.
+// Do we want this at all? Probably means accepting json body vs. html body.
 if (process.env.CANONICAL) {
   opts.canonical = process.env.CANONICAL;
 }
