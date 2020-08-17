@@ -3,7 +3,7 @@
  */
 
 const AmpOptimizer = require("@ampproject/toolbox-optimizer");
-const ampOptimizer = AmpOptimizer.create(processOptions());
+const ampOptimizer = AmpOptimizer.create(getOptions());
 
 const express = require("express");
 const app = express();
@@ -11,6 +11,7 @@ const app = express();
 const port = 3000;
 
 app.use(express.text());
+app.use(express.json());
 
 const opts = {};
 if (process.env.CANONICAL) {
@@ -19,9 +20,28 @@ if (process.env.CANONICAL) {
 
 app.post("/", (req, res) => {
   const originalHtml = req.body;
-  ampOptimizer.transformHtml(originalHtml, opts).then(optimizedHtml => {
-    res.send(optimizedHtml);
-  });
+  console.error("requesting");
+  if (!req.body) {
+    res.status = 400;
+    res.send("Error: please provide html in the body of your post request.");
+    return;
+  }
+  if (opts.verbose) {
+    console.log(`Transforming html: ${originalHtml}`);
+  }
+  ampOptimizer
+    .transformHtml(originalHtml, opts)
+    .then(optimizedHtml => {
+      res.set("Content-Type", "text/html");
+      res.send(optimizedHtml);
+    })
+    .catch(err => {
+      console.error(err);
+
+      res.status = 500;
+      res.set("Content-Type", "text/plain");
+      res.send(`Error: ${err.message}`);
+    });
 });
 
 app.listen(port, () => {
@@ -29,10 +49,10 @@ app.listen(port, () => {
 });
 
 function camelToSnakeCase(str) {
-  str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+  return str.replace(/[A-Z]/g, letter => `_${letter}`).toUpperCase();
 }
 
-function processOptions() {
+function getOptions() {
   const opts = {};
   [
     "autoAddMandatoryTags", // defaults true
@@ -50,7 +70,7 @@ function processOptions() {
   ].forEach(option => {
     const snakeCaseOpt = camelToSnakeCase(option);
     if (snakeCaseOpt in process.env) {
-      opts[option] = process.env.snakeCaseOpt;
+      opts[option] = process.env[snakeCaseOpt];
     }
   });
 
